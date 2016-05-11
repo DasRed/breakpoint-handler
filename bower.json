@@ -1,0 +1,17 @@
+{
+  "name": "breakpoint-handler",
+  "homepage": "https://github.com/DasRed/breakpoint-handler",
+  "description": "A handler for web breakpoints for responsive designs",
+  "main": "",
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "resize-handler": "^1.0.0"
+  }
+}
