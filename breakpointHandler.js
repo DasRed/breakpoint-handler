@@ -126,7 +126,11 @@
          */
         failed: {
             value: function(failed) {
-                this.failedCallback = failed || noop;
+                if ((failed instanceof Function) === false) {
+                    failed = noop;
+                }
+
+                this.failedCallback = failed;
 
                 return this;
             },
@@ -163,7 +167,11 @@
          */
         success: {
             value: function(success) {
-                this.successCallback = success || noop;
+                if ((success instanceof Function) === false) {
+                    success = noop;
+                }
+
+                this.successCallback = success;
 
                 return this;
             },
