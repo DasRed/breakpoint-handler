@@ -1,15 +1,15 @@
 'use strict';
 
-(function (factory) {
+(function (root, factory) {
     // AMD (Register as an anonymous module)
     if (typeof define === 'function' && define.amd) {
         define(['resizeHandler'], factory);
     }
     // Browser globals
     else {
-        window.BreakpointHandler = factory(window.ResizeHandler);
+        root.BreakpointHandler = factory(root.ResizeHandler);
     }
-}(function (ResizeHandler) {
+}(this, function (ResizeHandler) {
     // no operations function
     var noop = function() {};
 
