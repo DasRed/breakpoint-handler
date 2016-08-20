@@ -11,19 +11,20 @@
     }
 }(this, function (ResizeHandler) {
     // no operations function
-    var noop = function() {};
+    var noop = function () {
+    };
 
     // array find polyfill
     if (!Array.prototype.find) {
-        Array.prototype.find = function(predicate) {
+        Array.prototype.find = function (predicate) {
             if (this === null) {
                 throw new TypeError('Array.prototype.find called on null or undefined');
             }
             if (typeof predicate !== 'function') {
                 throw new TypeError('predicate must be a function');
             }
-            var list = Object(this);
-            var length = list.length >>> 0;
+            var list    = Object(this);
+            var length  = list.length >>> 0;
             var thisArg = arguments[1];
             var value;
 
@@ -44,7 +45,7 @@
      * @constructor
      */
     function Rule(name, mediaQuery) {
-        this.name = name;
+        this.name       = name;
         this.mediaQuery = mediaQuery;
     }
 
@@ -76,7 +77,7 @@
          * @returns {Boolean}
          */
         valid: {
-            get: function() {
+            get: function () {
                 return window.matchMedia(this.mediaQuery).matches;
             },
             enumerable: false,
@@ -87,8 +88,8 @@
     /**
      *
      * @param {Rule} rule
-     * @param {Function} success
-     * @param {Function} failed
+     * @param {Function} [success]
+     * @param {Function} [failed]
      * @constructor
      */
     function Listener(rule, success, failed) {
@@ -98,47 +99,6 @@
 
     // proto
     Listener.prototype = Object.create(Object.prototype, {
-        /**
-         * executes the listener
-         *
-         * @returns {Boolean}
-         */
-        execute: {
-            value: function() {
-                if (this.rule.valid === true) {
-                    this.successCallback();
-                }
-                else
-                {
-                    this.failedCallback();
-                }
-            },
-            enumerable: false,
-            configurable: false,
-            writable: false
-        },
-
-        /**
-         * sets a new failed function
-         *
-         * @param {Function} failed
-         * @returns {Listener}
-         */
-        failed: {
-            value: function(failed) {
-                if ((failed instanceof Function) === false) {
-                    failed = noop;
-                }
-
-                this.failedCallback = failed;
-
-                return this;
-            },
-            enumerable: false,
-            configurable: false,
-            writable: false
-        },
-
         /**
          * @var {Function}
          */
@@ -160,27 +120,6 @@
         },
 
         /**
-         * sets a new success function
-         *
-         * @param {Function} success
-         * @returns {Listener}
-         */
-        success: {
-            value: function(success) {
-                if ((success instanceof Function) === false) {
-                    success = noop;
-                }
-
-                this.successCallback = success;
-
-                return this;
-            },
-            enumerable: false,
-            configurable: false,
-            writable: false
-        },
-
-        /**
          * @var {Function}
          */
         successCallback: {
@@ -192,10 +131,56 @@
     });
 
     /**
+     * executes the listener
+     *
+     * @returns {Boolean}
+     */
+    Listener.prototype.execute = function () {
+        if (this.rule.valid === true) {
+            this.successCallback();
+        }
+        else {
+            this.failedCallback();
+        }
+    };
+
+    /**
+     * sets a new failed function
+     *
+     * @param {Function} [failed]
+     * @returns {Listener}
+     */
+    Listener.prototype.failed = function (failed) {
+        if ((failed instanceof Function) === false) {
+            failed = noop;
+        }
+
+        this.failedCallback = failed;
+
+        return this;
+    };
+
+    /**
+     * sets a new success function
+     *
+     * @param {Function} [success]
+     * @returns {Listener}
+     */
+    Listener.prototype.success = function (success) {
+        if ((success instanceof Function) === false) {
+            success = noop;
+        }
+
+        this.successCallback = success;
+
+        return this;
+    };
+
+    /**
      * @constructor
      */
     function BreakpointHandler() {
-        this.rules = [];
+        this.rules     = [];
         this.listeners = [];
 
         ResizeHandler.register(this.handle.bind(this));
@@ -205,76 +190,7 @@
     BreakpointHandler.prototype = Object.create(Object.prototype, {
 
         /**
-         * appends a new rule
-         *
-         * @param {String} name
-         * @param {String} mediaQuery
-         * @returns {BreakpointHandler}
-         */
-        appendRule: {
-            value: function(name, mediaQuery) {
-                if (this.rules.some(function(rule) {
-                    return rule.name === name;
-                }) === true) {
-                    throw new Error('A rule with name "' + name + '" is already defined.');
-                }
-
-                this.rules.push(new Rule(name, mediaQuery));
-
-                return this;
-            },
-            enumerable: false,
-            configurable: false,
-            writable: false
-        },
-
-        /**
-         * handle all listeners
-         *
-         * @returns {BreakpointHandler}
-         */
-        handle: {
-            value: function() {
-                this.listeners.forEach(function(listener) {
-                    listener.execute();
-                });
-
-                return this;
-            },
-            enumerable: false,
-            configurable: false,
-            writable: false
-        },
-
-        /**
-         * creates a new listener with rule name
-         *
-         * @param {String} ruleName
-         * @returns {Listener}
-         */
-        listener: {
-            value: function(ruleName) {
-                var rule = this.rules.find(function(rule) {
-                    return rule.name === ruleName;
-                });
-
-                if ((rule instanceof Rule) === false) {
-                    throw new Error('Rule with name "' + ruleName + '" can not be found.');
-                }
-
-                var listener = new Listener(rule, noop, noop);
-
-                this.listeners.push(listener);
-
-                return listener;
-            },
-            enumerable: false,
-            configurable: false,
-            writable: false
-        },
-
-        /**
-         * @var Listener[]
+         * @var {Array.<Listener>=}
          */
         listeners: {
             value: null,
@@ -284,77 +200,119 @@
         },
 
         /**
-         * @param {String} ruleName
-         * @param {Function} success
-         * @param {Function} failed
-         * @returns {BreakpointHandler}
-         */
-        register: {
-            value: function(ruleName, success, failed) {
-                this.listener(ruleName).success(success).failed(failed);
-
-                return this;
-            },
-            enumerable: true,
-            configurable: false,
-            writable: false
-        },
-
-        /**
-         * @var Rule[]
+         * @var {Array.<Rule>=}
          */
         rules: {
             value: null,
             enumerable: false,
             configurable: false,
             writable: true
-        },
-
-        /**
-         * removes a rule
-         *
-         * @param {String} name
-         * @returns {BreakpointHandler}
-         */
-        removeRule: {
-            value: function(name) {
-                this.rules = this.rules.filter(function(rule) {
-                    return rule.name !== name;
-                });
-
-                this.listeners = this.listeners.filter(function(listener) {
-                    return listener.rule.name !== name;
-                });
-
-                return this;
-            },
-            enumerable: false,
-            configurable: false,
-            writable: false
-        },
-
-        /**
-         * @param {String} ruleName
-         * @param {Function} success
-         * @param {Function} failed
-         * @returns {BreakpointHandler}
-         */
-        unregister: {
-            value: function(ruleName, success, failed) {
-                success = success || noop;
-                failed = failed || noop;
-
-                this.listeners = this.listeners.filter(function(listener) {
-                    return listener.rule.name !== ruleName && listener.successCallback !== success && listener.failedCallback !== failed;
-                });
-
-                return this;
-            },
-            enumerable: true,
-            configurable: false,
-            writable: false
         }
     });
+
+
+    /**
+     * appends a new rule
+     *
+     * @param {String} name
+     * @param {String} mediaQuery
+     * @returns {BreakpointHandler}
+     */
+    BreakpointHandler.prototype.appendRule = function (name, mediaQuery) {
+        if (this.rules.some(function (rule) {
+                return rule.name === name;
+            }) === true) {
+            throw new Error('A rule with name "' + name + '" is already defined.');
+        }
+
+        this.rules.push(new Rule(name, mediaQuery));
+
+        return this;
+    };
+
+    /**
+     * handle all listeners
+     *
+     * @returns {BreakpointHandler}
+     */
+    BreakpointHandler.prototype.handle = function () {
+        this.listeners.forEach(function (listener) {
+            listener.execute();
+        });
+
+        return this;
+    };
+    /**
+     * creates a new listener with rule name
+     *
+     * @param {String} ruleName
+     * @returns {Listener}
+     */
+    BreakpointHandler.prototype.listener = function (ruleName) {
+        var rule = this.rules.find(function (rule) {
+            return rule.name === ruleName;
+        });
+
+        if ((rule instanceof Rule) === false) {
+            throw new Error('Rule with name "' + ruleName + '" can not be found.');
+        }
+
+        var listener = new Listener(rule, noop, noop);
+
+        this.listeners.push(listener);
+
+        return listener;
+    };
+
+
+    /**
+     * @param {String} ruleName
+     * @param {Function} [success]
+     * @param {Function} [failed]
+     * @returns {BreakpointHandler}
+     */
+    BreakpointHandler.prototype.register = function (ruleName, success, failed) {
+        this.listener(ruleName).success(success).failed(failed);
+
+        return this;
+    };
+
+
+    /**
+     * removes a rule
+     *
+     * @param {String} name
+     * @returns {BreakpointHandler}
+     */
+    BreakpointHandler.prototype.removeRule = function (name) {
+        this.rules = this.rules.filter(function (rule) {
+            return rule.name !== name;
+        });
+
+        this.listeners = this.listeners.filter(function (listener) {
+            return listener.rule.name !== name;
+        });
+
+        return this;
+    };
+
+    /**
+     * @param {String} ruleName
+     * @param {Function} [success]
+     * @param {Function} [failed]
+     * @returns {BreakpointHandler}
+     */
+    BreakpointHandler.prototype.unregister = function (ruleName, success, failed) {
+        success = success || noop;
+        failed  = failed || noop;
+
+        this.listeners = this.listeners.filter(function (listener) {
+            return listener.rule.name !== ruleName && listener.successCallback !== success && listener.failedCallback !== failed;
+        });
+
+        return this;
+    };
+
 
     return new BreakpointHandler();
 }));
