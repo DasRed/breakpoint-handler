@@ -16,6 +16,11 @@
 
     // array find polyfill
     if (!Array.prototype.find) {
+        /**
+         *
+         * @param {Function} predicate
+         * @return {*|undefined}
+         */
         Array.prototype.find = function (predicate) {
             if (this === null) {
                 throw new TypeError('Array.prototype.find called on null or undefined');
