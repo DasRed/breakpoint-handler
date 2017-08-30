@@ -1,6 +1,6 @@
 {
   "name": "breakpoint-handler",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "A handler for web breakpoints for responsive designs",
   "main": "breakpointHandler.js",
   "repository": {
@@ -12,5 +12,8 @@
   "bugs": {
     "url": "https://github.com/DasRed/breakpoint-handler/issues"
   },
-  "homepage": "https://github.com/DasRed/breakpoint-handler#readme"
+  "homepage": "https://github.com/DasRed/breakpoint-handler#readme",
+  "dependencies": {
+    "resize-handler": "^1.0.0"
+  }
 }
