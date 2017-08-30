@@ -2,6 +2,7 @@
 ## Install
 ```
 bower install breakpoint-handler --save
+npm install breakpoint-handler --save
 ```
 
 ## Example 

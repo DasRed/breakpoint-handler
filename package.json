@@ -1,0 +1,16 @@
+{
+  "name": "breakpoint-handler",
+  "version": "1.0.5",
+  "description": "A handler for web breakpoints for responsive designs",
+  "main": "breakpointHandler.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DasRed/breakpoint-handler.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/DasRed/breakpoint-handler/issues"
+  },
+  "homepage": "https://github.com/DasRed/breakpoint-handler#readme"
+}
